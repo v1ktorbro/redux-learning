@@ -1,23 +1,58 @@
-import logo from './logo.svg';
 import './App.css';
+import { useDispatch, useSelector } from 'react-redux';
 
 function App() {
+  const dispatch = useDispatch();
+  const cash = useSelector((state) => state.cash.cash);
+  const customers = useSelector((state) => state.customers.customers);
+
+  const addCash = (cash) => {
+    dispatch({type: 'ADD_CASH', payload: cash});
+  };
+  const getCash = (cash) => {
+    dispatch({type: 'GET_CASH', payload: cash});
+  };
+
+  const addCustomer = (name) => {
+    const customer = {
+      name,
+      id: Date.now(),
+    };
+    dispatch({type: 'ADD_CUSTOMER', payload: customer});
+  };
+
+  const removeCustomer = (customer) => {
+    dispatch({type: 'REMOVE_CUSTOMER', payload: customer.id});
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{fontSize: '3rem'}}>Баланс: {cash}</div>
+      <div style={{display: 'flex'}}>
+        <button style={{fontSize: '2rem'}} onClick={() => addCash(Number(prompt()))}>Пополнить счёт</button>
+        <button style={{fontSize: '2rem'}} onClick={() => getCash(Number(prompt()))}>Снять со счёта</button>
+        <button style={{fontSize: '2rem'}} onClick={() => addCustomer(prompt())}>Добавить клиента</button>
+        <button style={{fontSize: '2rem'}} onClick={() => getCash(Number(prompt()))}>Удалить клиента</button>
+      </div>
+      {
+        customers.length > 0 ?
+          <div>
+            {customers.map((customer) => {
+              return (
+                <div 
+                  key={customer.id}
+                  id={customer.id}
+                  onClick={() => removeCustomer(customer)}
+                  style={{fontSize: '2rem', 
+                          border: '1px solid blue', 
+                          padding: '5px',
+                          marginTop: '5px'}}>{customer.name}</div>
+              );
+            })}
+          </div>
+          :
+          <span style={{fontSize: '2rem'}}>Клиенты отсутствуют!</span>
+      }
     </div>
   );
 }
